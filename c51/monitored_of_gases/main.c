@@ -1,4 +1,5 @@
 #include<reg52.h>
+#include<intrins.h>
 #define uint unsigned int
 #define uchar unsigned char
 
@@ -9,7 +10,7 @@ sbit OE=P3^1;
 sbit ST=P3^4;
 sbit EOC=P3^2;
 
-#define BAOJIN_SPEED 10
+#define BAOJIN_SPEED 6
 
 //uchar test=2;
 
@@ -125,9 +126,9 @@ void update_LED()
 	}
 	else//如果没有报警 指示灯指示当前显示气体
 	{
-		temp=0x01;
-		temp<<=now_display;
-		P1=~temp;
+		temp=0xFE;
+		temp=_crol_(temp,now_display);
+		P1=temp;
 	}
 }
 

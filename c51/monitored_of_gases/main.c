@@ -9,6 +9,7 @@ uchar code display_table[]={0xBF,0x8c};//-,p
 sbit OE=P3^1;
 sbit ST=P3^4;
 sbit EOC=P3^2;
+sbit BEEP=P3^7;
 
 #define BAOJIN_SPEED 6
 
@@ -79,7 +80,7 @@ void found_max()
 }
 void is_overproof(uchar i)
 {
-	bit b=0;
+	bit b=0,t=(baojin==0);
 	if(inputs[i]>input_max[i])
 	{
 		b=1;
@@ -111,7 +112,12 @@ void is_overproof(uchar i)
 			baojin7=b;
 			break;
 	}
-	if(baojin) found_max();//找到最大的报警量
+	if(baojin) 
+	{
+		found_max();//找到最大的报警量
+		if(t)//之前没有报警
+			sound=1;
+	}
 }
 
 //改变指示灯
@@ -183,7 +189,7 @@ void display()
 //
 void main()
 {
-	inputs[0]=11;
+	BEEP=0;
 	EA=1;//开放总中断
 	
 	//初始化ADC0809
@@ -227,6 +233,7 @@ void timer() interrupt 1
 	b++;
 	if(baojin)
 	{//有报警 闪烁 切换报警显示数据
+		if(sound) BEEP=~BEEP;//响报警
 		if(b>2)
 		{
 			shanshuo=~shanshuo;

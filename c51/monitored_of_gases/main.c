@@ -218,13 +218,17 @@ void scan_key()
 		for(j=n;j<n+4;j++)
 		{
 			if(j==key)
+			{
 				if(keys[j]==0)
 				{
 					keys[j]=1;
 					onkeydown(key);
 				}
+			}
 			else
+			{
 				keys[j]=0;
+			}
 		}
 	}
 }

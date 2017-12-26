@@ -313,7 +313,7 @@ void display()
 //
 void main()
 {
-	BEEP=0;
+	BEEP=1;
 	EA=1;//开放总中断
 	
 	//初始化ADC0809
@@ -418,7 +418,7 @@ void timer_beep() interrupt 3
 	}
 	else
 	{
-		BEEP=0;
+		BEEP=1;
 		TR1=0;
 	}
 }

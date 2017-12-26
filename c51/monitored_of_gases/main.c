@@ -73,10 +73,10 @@ void start_ADC()
 void found_max()
 {
 	uchar max=0,i,c,o=baojin_max;
-	for(i=0;i<7;i++)
+	for(i=0;i<8;i++)
 	{
 		if(inputs[i]>input_max[i])
-		c=inputs[i]-input_max[i];
+			c=inputs[i]-input_max[i];
 		if(c>max)
 		{
 			max=c;

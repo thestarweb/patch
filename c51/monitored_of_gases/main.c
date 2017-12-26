@@ -50,6 +50,8 @@ bit setting_mode=0;
 bit pass_mode=0;
 bit speed_mode=0;
 
+uchar a_beep=0;
+
 void usleep(uint z)
 {
 	uint x;
@@ -212,7 +214,8 @@ void scan_key()
 				key+=3;
 				break;
 			default:
-				//key_error=1;//冲突按键 影响显示屏
+				TR1=1;
+				a_beep=10;//冲突按键 影响显示屏 报警
 				continue;
 		}
 		for(j=n;j<n+4;j++)
@@ -322,6 +325,7 @@ void main()
 	
 	//初始化定时器
 	ET0=1;//开放定时器1中断
+	ET1=1;//
 	//初始化定时器
 	TMOD=0x01;
 	TH0=0x00;
@@ -355,7 +359,7 @@ void timer() interrupt 1
 	b++;
 	if(baojin)
 	{//有报警 闪烁 切换报警显示数据
-		if(sound) BEEP=~BEEP;//响报警
+		if(sound) TR1=1;//响报警
 		if(b>2)
 		{
 			shanshuo=~shanshuo;
@@ -397,4 +401,24 @@ void scan_input() interrupt 0
 	scan_delay=0;
 	if(now_scan==8) now_scan=0;
 	st=0;
+}
+void timer_beep() interrupt 3
+{
+	if(baojin&&sound)
+	{
+		BEEP=~BEEP;
+		if(shanshuo) TH1=0xE8;
+		else TH1=0xEF;;
+	}
+	else if(a_beep)
+	{
+		TH1=0xD8;
+		BEEP=~BEEP;
+		a_beep--;
+	}
+	else
+	{
+		BEEP=0;
+		TR1=0;
+	}
 }

@@ -46,11 +46,16 @@ uchar b=0,b2=0;//记录
 uchar now_display=0;//存放当前显示位置
 uchar display_speed=20;
 
+//各种扩展模式
 bit setting_mode=0;
 bit pass_mode=0;
 bit speed_mode=0;
 
-uchar a_beep=0;
+uchar a_beep=0;//警告音长度
+
+uchar pass[]={0,0,0,0};
+uchar pass_input[4];
+uchar pass_now=0;
 
 void usleep(uint z)
 {
@@ -132,6 +137,7 @@ void is_overproof(uchar i)
 
 void onkeydown(uchar keycode)
 {
+	uchar temp;
 	if(baojin)
 	{
 		if(keycode==15)
@@ -139,23 +145,63 @@ void onkeydown(uchar keycode)
 			sound=0;
 		}
 	}
+	else if(pass_mode)
+	{
+		b=0;
+		if(keycode<12)
+		{
+			pass_input[pass_now]=keycode;
+			pass_now++;
+			if(pass_now==4)
+			{
+				if(setting_mode)
+				{
+				}
+				else
+				{
+					for(temp=0;temp<4;temp++)
+					{
+						if(pass_input[temp]!=pass[temp])
+						{//密码错误！
+							pass_mode=0;
+							a_beep=50;
+							TR1=1;
+							return;
+						}
+					}
+					setting_mode=1;
+					pass_mode=0;
+				}
+			}
+		}
+		else if(keycode==12)
+		{
+			pass_mode=0;
+			b=0;
+		}
+	}
 	else
 	{
-		if(pass_mode)
+		if(keycode<8)
 		{
+			speed_mode=0;
+			now_display=keycode;//默认状态下按下0-7可切换显示通道
+			b=0;//顺便重置一下显示时间
+		}
+		else if(keycode==14)
+		{
+			TR1=1;
 		}
 		else if(setting_mode)
 		{
+			if(keycode==12)
+			{
+				setting_mode=0;
+			}
 		}
 		else
 		{
-			if(keycode<8)
-			{
-				speed_mode=0;
-				now_display=keycode;//默认状态下按下0-7可切换显示通道
-				b=0;//顺便重置一下显示时间
-			}
-			else if(keycode<12)
+			if(keycode<12)
 			{
 				speed_mode=1;
 				b=0;
@@ -175,6 +221,11 @@ void onkeydown(uchar keycode)
 				}
 				if(display_speed<10) display_speed=10;
 				if(display_speed>200) display_speed=200;
+			}
+			else if(keycode==12)
+			{
+				pass_now=0;
+				pass_mode=1;
 			}
 		}
 	}
@@ -246,9 +297,13 @@ void update_LED()
 		if(shanshuo) P1=~baojin;
 		else P1=0xFF;
 	}
-	else if(speed_mode)
+	else if(speed_mode||pass_mode)
 	{
-		P1=0xFF;//速度设置模式下没有LED灯
+		P1=0xFF;//速度\密码设置模式下没有LED灯
+	}
+	else if(setting_mode&&shanshuo)
+	{
+		P1=0xFF;
 	}
 	else//如果没有报警 指示灯指示当前显示气体
 	{
@@ -286,6 +341,7 @@ void display_num(uchar input)
 }
 void display()
 {
+	uchar temp;
 	if(baojin)
 	{
 		if(b2<BAOJIN_SPEED)
@@ -299,6 +355,17 @@ void display()
 		{
 			display_num(inputs[baojin_max]);
 		}
+	}
+	else if(pass_mode)
+	{
+		for(temp=0;temp<pass_now;temp++)
+			_display(temp,display_table[0]);
+		if(shanshuo)
+			_display(temp,display_table[0]);
+	}
+	else if(setting_mode)
+	{
+		display_num(input_max[now_display]);
 	}
 	else if(speed_mode)
 	{
@@ -368,12 +435,28 @@ void timer() interrupt 1
 			if(b2==BAOJIN_SPEED*2) b2=0;
 		}
 	}
+	else if(pass_mode)
+	{
+		if(b>2)
+		{
+			shanshuo=~shanshuo;
+			b=0;
+		}
+	}
 	else if(speed_mode)
 	{
 		if(b>TIME_OUT)
 		{
 			speed_mode=0;
 			b=0;
+		}
+	}
+	else if(setting_mode)
+	{
+		if(b>4)
+		{
+			b=0;
+			shanshuo=~shanshuo;
 		}
 	}
 	else
@@ -415,6 +498,11 @@ void timer_beep() interrupt 3
 		TH1=0xD8;
 		BEEP=~BEEP;
 		a_beep--;
+	}
+	else if(keys[14])
+	{
+		TH1=0xF0;
+		BEEP=~BEEP;
 	}
 	else
 	{

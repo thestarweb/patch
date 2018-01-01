@@ -239,11 +239,11 @@ void scan_key()
 		P0=scan_wei[i];
 		temp[i]=P0;
 	}
-	usleep(2);//消除抖动
+	usleep(5);//消除抖动
 	for(i=0;i<4;i++)
 	{
 		P0=scan_wei[i];
-		temp[i]=temp[i]&P0;
+		temp[i]=temp[i]|P0;
 	}
 	for(i=0;i<4;i++)
 	{

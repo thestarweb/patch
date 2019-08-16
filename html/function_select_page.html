@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>main</title>
+	<meta charset="utf-8"/>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		html,body{
+			height: 100%;
+		}
+		body{
+			background: url(./bg.jpg);
+		}
+		#main{
+			background: rgba(255,255,255,0.5);
+			position: absolute;
+
+			width: 500px;
+			height: 290px;
+			left: 50%;
+			margin-left: -250px;
+			top: 50%;
+			margin-top: -150px;
+			/*width: 1000px;
+			height: 600px;
+			left: 50%;
+			margin-left: -500px;
+			top: 50%;
+			margin-top: -300px;*/
+
+			border-radius: 5px;
+			overflow: hidden;
+			border: 5px ridge #FFF;
+		}
+		#left{
+			float: left;
+			background: rgba(50,178,255,0.5);
+			height: 100%;
+			border-right: 5px ridge #FFF;
+			width: 30%;
+		}
+		#info{
+			position: relative;
+			top: 35%;
+			text-align: center;
+			/*width: 250px;*/
+		}
+		#list{
+			height: 100%;
+			overflow: auto;
+		}
+		#list div{
+			height: 80px;
+		}
+		#list .data{
+			margin-left: 80px;
+		}
+		p{
+			padding: 5px;
+		}
+		#list .icon{
+			background: rgba(0,0,0,0.4);
+			float: left;
+		}
+		#list .icon img{
+			width: 80px;
+			height: 80px;
+		}
+		#list .title{
+			font-size: 28px;
+		}
+		.item{
+			border: 2px ridge #FFF;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<div id="main">
+		<div id="left">
+			<div id="info">
+				<p>xxxx系统</p>
+				<p>用户名</p>
+				<p>登出</p>
+			</div>
+		</div>
+		<div id="list">
+			<div class="item" style="background: #F44">
+				<div class="icon"><img src="./pf.png"></div>
+				<div class="data">
+					<p class="title">配方</p>
+					<p id="desc">描述</p>
+				</div>
+			</div>
+			<div class="item" style="background: #2AF">
+				<div class="icon"><img src="./pc.png"></div>
+				<div class="data">
+					<p class="title">排产</p>
+					<p id="desc">描述</p>
+				</div>
+			</div>
+			<div class="item"  style="background: #8F8">
+				<div class="icon"><img src="./ck.png"></div>
+				<div class="data">
+					<p class="title">仓库</p>
+					<p id="desc">描述</p>
+				</div>
+			</div>
+			<div class="item"  style="background: yellow">
+				<div class="icon"><img src="./bb.png"></div>
+				<div class="data">
+					<p class="title">报表</p>
+					<p id="desc">描述</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
